@@ -1,0 +1,671 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Live Stream | Apple TV+</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<style>
+/* REUTILIZANDO ESTILOS COMUNS */
+:root {
+  --apple-dark: #000000;
+  --apple-light: #f5f5f7;
+  --apple-gray: #86868b;
+  --apple-blue: #0071e3;
+  --apple-red: #ff3b30;
+  --apple-card: #1d1d1f;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Helvetica Neue", sans-serif;
+}
+
+body {
+  background: var(--apple-dark);
+  color: var(--apple-light);
+  overflow-x: hidden;
+}
+
+/* HEADER */
+.apple-header {
+  position: fixed;
+  top: 0;
+  width: 100%;
+  padding: 20px 60px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: rgba(0, 0, 0, 0.9);
+  backdrop-filter: blur(20px);
+  z-index: 1000;
+}
+
+.apple-logo {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.apple-logo img {
+  height: 30px;
+  width: auto;
+}
+
+.apple-nav {
+  display: flex;
+  gap: 40px;
+}
+
+.apple-nav a {
+  color: var(--apple-light);
+  text-decoration: none;
+  font-size: 17px;
+  font-weight: 400;
+  transition: color 0.3s;
+  padding: 8px 0;
+}
+
+.apple-nav a.active {
+  color: var(--apple-blue);
+  position: relative;
+}
+
+.apple-nav a.active::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 2px;
+  background: var(--apple-blue);
+}
+
+.apple-nav a:hover {
+  color: var(--apple-blue);
+}
+
+.apple-actions {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+/* CONTEÚDO PRINCIPAL */
+.main-content {
+  margin-top: 80px;
+  padding: 60px;
+}
+
+/* HERO LIVE */
+.live-hero {
+  margin-bottom: 60px;
+}
+
+.live-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  background: var(--apple-red);
+  color: white;
+  padding: 8px 20px;
+  border-radius: 50px;
+  font-weight: 600;
+  margin-bottom: 20px;
+}
+
+.live-badge .live-dot {
+  width: 10px;
+  height: 10px;
+  background: white;
+  border-radius: 50%;
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0% { opacity: 1; }
+  50% { opacity: 0.5; }
+  100% { opacity: 1; }
+}
+
+.live-title {
+  font-size: 48px;
+  font-weight: 700;
+  margin-bottom: 15px;
+  background: linear-gradient(90deg, #fff, #ff6b6b);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.live-subtitle {
+  font-size: 20px;
+  color: #a2a2a2;
+  max-width: 600px;
+}
+
+/* PLAYER LIVE */
+.live-player-section {
+  margin-bottom: 60px;
+}
+
+.player-container {
+  position: relative;
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  border-radius: 16px;
+  overflow: hidden;
+  background: #000;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.8);
+}
+
+.player-wrapper {
+  position: relative;
+  width: 100%;
+  padding-bottom: 56.25%;
+  background: #000;
+}
+
+.live-placeholder {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.7)),
+              url('https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEiF_gMBBKHQRnpivY9CoPZdDA8p6cDc9GioeAENA8POGTHbdo8WYHS5ml-bMns92QIAVop9Jd7L8lLr1RxS4jlhbqx5OAV04_hZ_pVJCFtzHYAybFfXnzYjJThZkKyvLGy9cwRPB7eKZb8E6RUoDJTZrsMQCOiyn2h8m6qNoBmChIukozidbrJOq9G_QHeN/s1200/c022753c-f633-4ca2-9b65-2a02779b1b3d.jpg') center/cover no-repeat;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 40px;
+  text-align: center;
+}
+
+.live-countdown {
+  background: rgba(255, 59, 48, 0.2);
+  border: 2px solid var(--apple-red);
+  padding: 20px 40px;
+  border-radius: 12px;
+  margin-bottom: 40px;
+}
+
+.countdown-title {
+  font-size: 18px;
+  color: #ff9999;
+  margin-bottom: 10px;
+}
+
+.countdown-timer {
+  font-size: 48px;
+  font-weight: 700;
+  color: white;
+  font-variant-numeric: tabular-nums;
+}
+
+.live-info {
+  max-width: 600px;
+  margin-bottom: 40px;
+}
+
+.live-info h3 {
+  font-size: 32px;
+  margin-bottom: 15px;
+  color: white;
+}
+
+.live-info p {
+  color: #d1d1d6;
+  line-height: 1.6;
+  font-size: 18px;
+}
+
+.live-notify-btn {
+  background: var(--apple-blue);
+  color: white;
+  border: none;
+  padding: 15px 40px;
+  border-radius: 12px;
+  font-size: 18px;
+  font-weight: 600;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  transition: all 0.3s;
+}
+
+.live-notify-btn:hover {
+  background: #0077ed;
+  transform: scale(1.05);
+}
+
+/* PRÓXIMAS LIVES */
+.upcoming-lives {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.section-title {
+  font-size: 32px;
+  font-weight: 700;
+  margin-bottom: 40px;
+  color: white;
+}
+
+.upcoming-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+  gap: 30px;
+}
+
+.upcoming-card {
+  background: var(--apple-card);
+  border-radius: 16px;
+  overflow: hidden;
+  transition: all 0.3s;
+}
+
+.upcoming-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.5);
+}
+
+.upcoming-image {
+  width: 100%;
+  height: 200px;
+  object-fit: cover;
+}
+
+.upcoming-content {
+  padding: 24px;
+}
+
+.upcoming-time {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: var(--apple-blue);
+  font-weight: 600;
+  margin-bottom: 15px;
+  font-size: 14px;
+}
+
+.upcoming-title {
+  font-size: 20px;
+  font-weight: 700;
+  margin-bottom: 10px;
+  color: white;
+}
+
+.upcoming-description {
+  color: #a2a2a2;
+  line-height: 1.5;
+  font-size: 15px;
+  margin-bottom: 20px;
+}
+
+.upcoming-btn {
+  width: 100%;
+  padding: 12px;
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  color: white;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.3s;
+  font-weight: 500;
+}
+
+.upcoming-btn:hover {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+/* FOOTER */
+.apple-footer {
+  padding: 40px 60px;
+  background: rgba(0, 0, 0, 0.95);
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  text-align: center;
+  color: #86868b;
+  font-size: 14px;
+  margin-top: 60px;
+}
+
+.footer-logo {
+  margin-bottom: 20px;
+}
+
+.footer-logo img {
+  height: 40px;
+  width: auto;
+  opacity: 0.8;
+}
+
+/* RESPONSIVIDADE */
+@media (max-width: 1200px) {
+  .live-title {
+    font-size: 40px;
+  }
+  
+  .upcoming-grid {
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  }
+}
+
+@media (max-width: 992px) {
+  .apple-header,
+  .main-content {
+    padding: 20px 30px;
+  }
+  
+  .main-content {
+    margin-top: 60px;
+  }
+  
+  .apple-nav {
+    gap: 25px;
+  }
+}
+
+@media (max-width: 768px) {
+  .apple-nav {
+    gap: 15px;
+    font-size: 15px;
+  }
+  
+  .live-title {
+    font-size: 32px;
+  }
+  
+  .countdown-timer {
+    font-size: 36px;
+  }
+  
+  .live-info h3 {
+    font-size: 24px;
+  }
+  
+  .section-title {
+    font-size: 28px;
+  }
+  
+  .upcoming-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 576px) {
+  .apple-header {
+    padding: 15px 20px;
+  }
+  
+  .main-content {
+    padding: 20px;
+    margin-top: 60px;
+  }
+  
+  .live-title {
+    font-size: 28px;
+  }
+  
+  .live-subtitle {
+    font-size: 16px;
+  }
+  
+  .countdown-timer {
+    font-size: 28px;
+  }
+  
+  .live-placeholder {
+    padding: 20px;
+  }
+  
+  .apple-logo img {
+    height: 24px;
+  }
+}
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<header class="apple-header">
+  <div class="apple-logo">
+    <img src="https://hyken.com/wp-content/uploads/2023/01/Apple-TV-Logo-2019-present.png" alt="Apple TV Logo">
+  </div>
+  
+  <nav class="apple-nav">
+    <a href="/">Início</a>
+    <a href="/live" class="active">Live</a>
+    <a href="/posts">Posts</a>
+  </nav>
+  
+  <div class="apple-actions">
+    <button class="search-btn"><i class="fas fa-search"></i></button>
+    <button class="user-btn"><i class="fas fa-user"></i></button>
+  </div>
+</header>
+
+<!-- CONTEÚDO PRINCIPAL -->
+<main class="main-content">
+  
+  <!-- HERO LIVE -->
+  <section class="live-hero">
+    <div class="live-badge">
+      <div class="live-dot"></div>
+      <span>AO VIVO AGORA</span>
+    </div>
+    
+    <h1 class="live-title">Apple Music Live</h1>
+    <p class="live-subtitle">Transmissões exclusivas ao vivo dos maiores artistas do mundo. Só no Apple TV+.</p>
+  </section>
+  
+  <!-- PLAYER LIVE -->
+  <section class="live-player-section">
+    <div class="player-container">
+      <div class="player-wrapper">
+        <div class="live-placeholder" id="livePlaceholder">
+          <div class="live-countdown">
+            <div class="countdown-title">PRÓXIMA TRANSMISSÃO EM</div>
+            <div class="countdown-timer" id="countdownTimer">--:--:--</div>
+          </div>
+          
+          <div class="live-info">
+            <h3>NBA All-Star Halftime Show: Transmissão ao Vivo</h3>
+            <p>Não perca a transmissão ao vivo exclusiva do show de intervalo do NBA All-Star Game. Performance especial de Louise com produção cinematográfica premium Apple TV+.</p>
+          </div>
+          
+          <button class="live-notify-btn" onclick="setNotification()">
+            <i class="fas fa-bell"></i>
+            Notificar-me quando começar
+          </button>
+        </div>
+        
+        <!-- Aqui iria o player de live streaming real -->
+        <div id="liveStreamPlayer" style="display: none; position: absolute; top: 0; left: 0; width: 100%; height: 100%;"></div>
+      </div>
+    </div>
+  </section>
+  
+  <!-- PRÓXIMAS LIVES -->
+  <section class="upcoming-lives">
+    <h2 class="section-title">Próximas Transmissões</h2>
+    
+    <div class="upcoming-grid">
+      <div class="upcoming-card">
+        <img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEhX_x5vkq65cDMXsp5-Mwdf9CvReUI9cKiJOEcuZplLmQktIVP2a-of9cUxrjz6H-mmlZjGx9Il9OhZRG4UtmdgnhpVv-opRoT9rXWTQcKOtdD45njyKSZAFHJjzFKixuFylSOIz12UbU-B6xdmQjcNzKrJmERnm9hsdiZSpmzsmUxt4fIdyRtBx38LYyJw/s800/alltst.png" 
+             alt="NBA All-Star" class="upcoming-image">
+        <div class="upcoming-content">
+          <div class="upcoming-time">
+            <i class="far fa-calendar"></i>
+            <span>20 FEV 2024 • 21:30 BR</span>
+          </div>
+          <h3 class="upcoming-title">NBA All-Star Halftime Show</h3>
+          <p class="upcoming-description">Show exclusivo de Louise no intervalo do All-Star Game. Transmissão ao vivo em 4K.</p>
+          <button class="upcoming-btn" onclick="addToCalendar(1)">Adicionar à Agenda</button>
+        </div>
+      </div>
+      
+      <div class="upcoming-card">
+        <img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEhX9P2j2MjIjIzkO-yNB3HtENFWk2dp2DE_ripgV5okgFZcc5Al5czn3H61sGZfouOj6Lv0nV7nxMCbIRjz-Ye93NsOBsRrCgmOy10rQj7JjsIY64aLwAGw4skd-kTR9hlHYJzJzmofcav_ww9nlRWHwOjWhm51nWOPV4X4Jd6Vd_xQCO8H5GGVBxKrjp_P/s800/poster.png" 
+             alt="Lady Gaga" class="upcoming-image">
+        <div class="upcoming-content">
+          <div class="upcoming-time">
+            <i class="far fa-calendar"></i>
+            <span>15 MAR 2024 • 20:00 BR</span>
+          </div>
+          <h3 class="upcoming-title">Lady Gaga Apple Music Live</h3>
+          <p class="upcoming-description">Performance exclusiva do Apple Music Fenty Bowl. Transmissão global.</p>
+          <button class="upcoming-btn" onclick="addToCalendar(2)">Adicionar à Agenda</button>
+        </div>
+      </div>
+      
+      <div class="upcoming-card">
+        <img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEj9Q1J0fNN4g0_UbqgG7S-OldHmABwQ3VwIqrcL2bWvnC8uQvbM7r4Q7YuhAhzA9KZPJ9mm5CRK_-r9DshoafDUY7L_rJYhP7t6Qs6ZfU7SQyf-rDSrVllS3iC5f6z5B3Zhm2kRl3aLhXqg8QdpxAl2SDYX_HB1hUyE27Ys/s800/taylor-swift-apple-music.jpg" 
+             alt="Taylor Swift" class="upcoming-image">
+        <div class="upcoming-content">
+          <div class="upcoming-time">
+            <i class="far fa-calendar"></i>
+            <span>30 MAR 2024 • 22:00 BR</span>
+          </div>
+          <h3 class="upcoming-title">Taylor Swift: The Eras Tour Live</h3>
+          <p class="upcoming-description">Show ao vivo direto do Eras Tour. Produção exclusiva Apple TV+.</p>
+          <button class="upcoming-btn" onclick="addToCalendar(3)">Adicionar à Agenda</button>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<!-- FOOTER -->
+<footer class="apple-footer">
+  <div class="footer-logo">
+    <img src="https://hyken.com/wp-content/uploads/2023/01/Apple-TV-Logo-2019-present.png" alt="Apple TV Logo">
+  </div>
+  <p>Copyright © 2023 Apple Inc. Todos os direitos reservados.</p>
+  <p>Transmissões ao vivo exclusivas no Apple TV+</p>
+</footer>
+
+<script>
+// Configuração do countdown
+const eventDate = new Date('2024-02-20T21:30:00-03:00').getTime();
+
+function updateCountdown() {
+  const now = new Date().getTime();
+  const distance = eventDate - now;
+  
+  if (distance < 0) {
+    document.getElementById('countdownTimer').textContent = 'AO VIVO AGORA!';
+    document.querySelector('.live-countdown').style.background = 'rgba(255, 59, 48, 0.3)';
+    document.querySelector('.live-countdown').style.borderColor = '#ff3b30';
+    return;
+  }
+  
+  const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+  const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+  const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+  
+  document.getElementById('countdownTimer').textContent = 
+    `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+}
+
+// Atualizar countdown a cada segundo
+setInterval(updateCountdown, 1000);
+updateCountdown(); // Chamada inicial
+
+// Funções da página
+function setNotification() {
+  if ('Notification' in window && Notification.permission === 'granted') {
+    new Notification('Apple TV+ Live', {
+      body: 'Você será notificado quando a transmissão ao vivo começar!',
+      icon: 'https://www.apple.com/favicon.ico'
+    });
+    alert('Você será notificado quando a transmissão começar!');
+  } else if ('Notification' in window && Notification.permission !== 'denied') {
+    Notification.requestPermission().then(permission => {
+      if (permission === 'granted') {
+        setNotification();
+      }
+    });
+  } else {
+    alert('Ative as notificações para ser avisado quando a transmissão começar!');
+  }
+}
+
+function addToCalendar(eventId) {
+  const events = {
+    1: {
+      title: 'NBA All-Star Halftime Show - Apple TV+',
+      date: '20240220T213000',
+      duration: 'PT2H',
+      description: 'Transmissão ao vivo exclusiva do show de intervalo do NBA All-Star Game.'
+    },
+    2: {
+      title: 'Lady Gaga Apple Music Live - Apple TV+',
+      date: '20240315T200000',
+      duration: 'PT2H',
+      description: 'Performance exclusiva do Apple Music Fenty Bowl.'
+    },
+    3: {
+      title: 'Taylor Swift: The Eras Tour Live - Apple TV+',
+      date: '20240330T220000',
+      duration: 'PT3H',
+      description: 'Show ao vivo direto do Eras Tour.'
+    }
+  };
+  
+  const event = events[eventId];
+  
+  // Criar link para adicionar ao Google Calendar
+  const googleCalendarUrl = `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${encodeURIComponent(event.title)}&dates=${event.date}/${event.date}&details=${encodeURIComponent(event.description)}&location=Apple TV+&sf=true&output=xml`;
+  
+  window.open(googleCalendarUrl, '_blank');
+}
+
+// Simular início de transmissão (para demonstração)
+function startLiveStream() {
+  const placeholder = document.getElementById('livePlaceholder');
+  const player = document.getElementById('liveStreamPlayer');
+  
+  placeholder.style.display = 'none';
+  player.style.display = 'block';
+  
+  // Aqui você integraria com um serviço de streaming real como:
+  // - YouTube Live
+  // - Twitch
+  // - Vimeo Livestream
+  // - Wowza
+  // - Mux
+  
+  player.innerHTML = `
+    <iframe 
+      width="100%" 
+      height="100%" 
+      src="https://www.youtube.com/embed/live_stream?channel=UCx-KWLTKlB83hDI6UKECtJQ" 
+      frameborder="0" 
+      allowfullscreen>
+    </iframe>
+  `;
+}
+
+// Iniciar transmissão após 10 segundos (para demonstração)
+setTimeout(() => {
+  // startLiveStream(); // Descomente para testar
+}, 10000);
+
+// Navegação do menu
+document.addEventListener('DOMContentLoaded', () => {
+  // Marcar link ativo
+  document.querySelectorAll('.apple-nav a').forEach(link => {
+    link.classList.remove('active');
+    if (link.getAttribute('href') === '/live') {
+      link.classList.add('active');
+    }
+  });
+});
+</script>
+</body>
+</html>
